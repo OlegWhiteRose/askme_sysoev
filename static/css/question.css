@@ -1,0 +1,29 @@
+.main-card {
+    width: 100%;
+    margin-bottom: 50px;
+    border-bottom: 1px solid black;
+}
+
+.main-avatar {
+    width: 100px;
+    height: 100px;
+    background-color: #ddd;
+    display: inline-block;
+    margin-right: 40px;
+}
+
+.main-textarea {
+    width: 600px; 
+    height: auto;
+    resize: none;
+    border: none; 
+    background-color: #ffffff; 
+    padding: 10px; 
+    outline: none; 
+    overflow: hidden;
+    line-height: 1;
+}
+
+.form-check {
+    margin-left: 70px;
+}
