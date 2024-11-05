@@ -22,6 +22,7 @@
     border: 2px solid black;
     margin-bottom: 40px;
     padding: 10px;
+    border-radius: 0;
 }
 
 .rating {
@@ -49,6 +50,7 @@
 
 .hot-q {
     margin-left: 40px;
+    margin-top: 5px;
 }
 
 .under-image {
@@ -73,6 +75,17 @@
     margin-left: 3px;
     display: flex;
     flex-direction: column;
+}
+
+button.dislike-like {
+    background: none;
+    border: none;
+    margin: 0;
+    padding: 0;    
+}
+
+button.dislike-like img {
+    display: block;
 }
 
 .pagination {
@@ -104,7 +117,8 @@
 }
 
 .tag {
-    font-size: 14px;
+    font-size: 17px;
+    margin-left: 4px;
     text-decoration: none; 
 }
 
