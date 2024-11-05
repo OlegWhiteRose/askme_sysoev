@@ -101,6 +101,7 @@ button.dislike-like img {
 
 .right-col {
     display: flex;
+    height: 100%;
     flex-direction: column; 
     align-items: center;
     margin: 50px 0px 0px 0px;
