@@ -1,0 +1,114 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block additional_links %}
+    <link rel="stylesheet" href="{% static 'css/question.css' %}">
+{% endblock %}
+
+{% block user %}
+    <div class="d-flex gap-1">
+        <div>  
+            <a href="login">log in</a>
+            <a href="register">register</a>
+        </div>
+    </div>
+{% endblock %}
+
+{% block cards %}
+    <article class="main-card">
+        <div class="d-flex">
+            <div>
+                <img class="main-avatar" alt="Avatar"></img>
+                <div class="under-image">
+                    <div class="rating">5</div>
+                    <div class="arrows">
+                        <button class="dislike-like">
+                            <img src="{% static 'img/arrow_up_12.png' %}">
+                        </button>
+                        <button class="dislike-like">
+                            <img src="{% static 'img/arrow_down_12.png' %}">
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div>
+                <h2>How to build a moon park?</h2>
+                <div class="card-title">
+                    <textarea class="main-textarea" readonly>Adjfklajsdkslfjdsl;kfjdslkfj...</textarea>
+                </div>
+                <div class="d-flex">
+                    <div class="tags">Tags: <a href="#">black-jack</a> <a href="#">bender</a></div>
+                </div>
+            </div>
+        </div>
+    </article>
+
+    <article class="card-answer">
+        <div class="d-flex">
+            <div>
+                <img class="avatar" alt="Avatar"></img>
+                <div class="under-image">
+                    <div class="rating">5</div>
+                    <div class="arrows">
+                        <button class="dislike-like">
+                            <img src="{% static 'img/arrow_up_12.png' %}">
+                        </button>
+                        <button class="dislike-like">
+                            <img src="{% static 'img/arrow_down_12.png' %}">
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <textarea class="main-textarea" readonly>Adjfklajsdkslfjdsl;kfjdslkfj...</textarea>
+        </div>
+        <div class="form-check">
+            <input class="form-check-input" type="checkbox" id="correctCheckbox">
+            <label class="form-check-label checkbox-label" for="correctCheckbox">Correct!</label>
+        </div>
+    </article>
+
+    <article class="card-answer">
+        <div class="d-flex">
+            <div>
+                <img class="avatar" alt="Avatar"></img>
+                <div class="under-image">
+                    <div class="rating">5</div>
+                    <div class="arrows">
+                        <button class="dislike-like">
+                            <img src="{% static 'img/arrow_up_12.png' %}">
+                        </button>
+                        <button class="dislike-like">
+                            <img src="{% static 'img/arrow_down_12.png' %}">
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <textarea class="main-textarea" readonly>Adjfklajsdkslfjdsl;kfjdslkfj...</textarea>
+        </div>
+        <div class="form-check">
+            <input class="form-check-input" type="checkbox" id="correctCheckbox">
+            <label class="form-check-label checkbox-label" for="correctCheckbox">Correct!</label>
+        </div>
+    </article>
+{% endblock %}
+
+{% block additional_blocks %}
+    <div class="bottom-line"></div>
+                
+    <div>
+        <textarea class="comment" placeholder="Enter your answer here.."></textarea>
+    </div>
+
+    <button class="button-answer">
+        Answer
+    </button>
+    </div>
+{% endblock %}
+
+{% block additional_scripts %}
+    <script src="{% static 'js/resize_textarea.js' %}"></script>
+    <script src="{% static 'js/resize_comment_area.js' %}"></script>
+{% endblock%}
+
+{% block pagination %}
+{% endblock %}
