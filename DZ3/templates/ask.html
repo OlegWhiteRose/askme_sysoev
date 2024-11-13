@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block additional_links %}
+    <link rel="stylesheet" href="{% static 'css/ask.css' %}">
+{% endblock %}
+
+{% block user %}
+    {% include 'login_register.html' %}
+{% endblock %}
+
+{% block content %}
+    <div class="col-lg-8 contest">
+        <form method="POST" action="{% url 'ask' %}">
+            {% csrf_token %}
+            <div class="text-center">
+                <h4 class="new-question">New Question</h4>
+                {% for error in errors %}
+                    <div class="mt-1 mb-1" style="color: red">{{ error }}</div>
+                {% endfor %}
+                <div>Title <input name="title" class="ms-5 w-50" placeholder="Enter Title of your answer here.."></div>
+                <div class="d-flex mt-3 justify-content-center">Text 
+                <div class="text w-50">
+                    <textarea name="text" class="text" placeholder="Enter content of your answer here.."></textarea>
+                </div>
+                </div>
+                <div>Tags <input name="tags" class="ms-5 w-50 mt-3" placeholder="Put tags here.."></div>
+            </div>
+            <button class="ask-button mt-3" type="submit">ASK!</button>
+        </form>
+    </div>
+{% endblock %}
