@@ -1,0 +1,13 @@
+input {
+    height: auto;
+    font-size: 16px; 
+    line-height: 1;
+}
+
+.login-button {
+    margin-left: 120px;
+}
+
+.create-account-href {
+    margin-left: 120px;
+}

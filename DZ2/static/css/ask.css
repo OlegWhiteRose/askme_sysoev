@@ -1,0 +1,26 @@
+.title {
+    width: 50rem;
+}
+
+div.text {
+    margin-left: 3.4rem;
+}
+
+textarea.text {
+    width: 100%;
+    height: 20rem;
+    resize: none;
+}
+
+.contest {
+    min-width: 500px;
+}
+
+.ask-button {
+    margin-left: max(32%, 180px);
+}
+
+.new-question {
+    width: 56%;
+    margin-bottom: 2rem;
+}
