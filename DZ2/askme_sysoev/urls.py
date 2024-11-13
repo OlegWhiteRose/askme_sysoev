@@ -23,10 +23,10 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('', views.index, name='index'),
     path('ask', views.ask, name='ask'),
-    path('question', views.question, name='question'),
+    path('question/<int:id>/', views.question, name='question'),
     path('settings', views.settings, name='settings'),
     path('login', views.login, name='login'),
     path('signup', views.register, name='register'),
-    # path('hot')
-    # path('tag')
+    path('hot', views.hot, name='hot'),
+    path('tag/<str:name>/', views.tag, name='tag'),
 ]

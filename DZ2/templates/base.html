@@ -37,24 +37,18 @@
                     {% block header %}
                     <div class="d-flex nav-q">
                         <h4>New Questions</h4>
-                        <a href="#" class="hot-q">Hot Questions</a>
+                        <a href="{% url 'hot' %}" class="hot-q">Hot Questions</a>
                     </div>
                     {% endblock %}
 
                     {% block cards %}
-                        {% include 'card.html' %}
-                        {% include 'card.html' %}
-                        {% include 'card.html' %}
+                        {% for card in page.object_list %}
+                            {% include 'card.html' %}
+                        {% endfor %}
                     {% endblock %}
                     
                     {% block pagination %}
-                    <div class="pagination">
-                        <a href="#" class="fs-4">1</a>
-                        <a href="#" class="fs-4">2</a>
-                        <a href="#" class="fs-4">3</a>
-                        <a href="#" class="fs-4">...</a>
-                        <a href="#" class="fs-4">53</a>
-                    </div>
+                        {% include 'pagination.html' %}
                     {% endblock %}
                 </div>
                 {% endblock %}
@@ -64,14 +58,14 @@
                     <div class="sidebar-section">
                         <h3>Popular Tags</h3>
                         <div>
-                            <a href="#" class="tag">perl</a>
-                            <a href="#" class="tag">python</a>
-                            <a href="#" class="tag">TechnoPark</a>
-                            <a href="#" class="tag">MySQL</a>
-                            <a href="#" class="tag">django</a>
-                            <a href="#" class="tag">Mail.Ru</a>
-                            <a href="#" class="tag">Voloshin</a>
-                            <a href="#" class="tag">Firefox</a>
+                            <a href="{% url 'tag' name='perl' %}" class="tag">perl</a>
+                            <a href="{% url 'tag' name='python' %}" class="tag">python</a>
+                            <a href="{% url 'tag' name='TechnoPark' %}" class="tag">TechnoPark</a>
+                            <a href="{% url 'tag' name='MySQL' %}" class="tag">MySQL</a>
+                            <a href="{% url 'tag' name='django' %}" class="tag">django</a>
+                            <a href="{% url 'tag' name='Mail.Ru' %}" class="tag">Mail.Ru</a>
+                            <a href="{% url 'tag' name='Voloshin' %}" class="tag">Voloshin</a>
+                            <a href="{% url 'tag' name='Firefox' %}" class="tag">Firefox</a>
                         </div>
                     </div>
 
