@@ -1,5 +1,10 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
+from django.db.models import Count
+from django.db.models import Prefetch
+from django.contrib.postgres.aggregates import ArrayAgg 
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from askme_sysoev.models import *
+
 
 def paginate(objects_list, request, per_page=10):
     page_number = request.GET.get('page', 1) 
@@ -29,17 +34,15 @@ def find_visible_pages(page):
 
 
 def index(request):
-    cards = []
+    question_tags = Prefetch('questiontag', queryset=QuestionTag.objects.select_related('tag'))
+    questions = Question.objects.newest().prefetch_related(question_tags).annotate(
+        tags=ArrayAgg('questiontag__tag__name', distinct=True), 
+        answers_cnt=Count('answer')  
+    )
 
-    for i in range(100):
-        card = {
-            'title': 'title ' + str(i),
-            'id': i,
-            'rating': i,
-            'text': 'text ' + str(i),
-            'tags': ['tag1', 'tag2'],
-        }
-        cards.append(card)
+    cards = questions.values(
+        'id', 'title', 'text', 'rating', 'created_at', 'created_user', 'answers_cnt', 'tags'
+    )
 
     page = paginate(cards, request, per_page=10)
     visible_pages = find_visible_pages(page)
@@ -50,7 +53,6 @@ def index(request):
     }
 
     return render(request, 'index.html', context)
-
 
 def ask(request):
     context = {
@@ -75,13 +77,8 @@ def ask(request):
 
 
 def question(request, id):
-    cards = []
-    for i in range(12):
-        card = {
-            'rating': i,
-            'text': 'text ' + str(i),
-        }
-        cards.append(card)
+    question_obj = get_object_or_404(Question, id=id)
+    cards = Answer.objects.filter(question=question_obj).order_by('-rating')
 
     page = paginate(cards, request, per_page=3)
     visible_pages = find_visible_pages(page)
@@ -89,12 +86,7 @@ def question(request, id):
     context = {
         'page': page,
         'visible_pages': visible_pages,
-        'main_card': {
-            'title': 'Asdfdsafdasfdsafasdasfsaf..',
-            'text': 'FDasjkkdjksadfkldsajflkdsajlfkds',
-            'rating': id,
-            'tags': ['tag1', 'tag2'],
-        },
+        'main_card': question_obj,
     }
 
     return render(request, 'question.html', context)
@@ -145,17 +137,7 @@ def login(request):
 
 
 def hot(request):
-    cards = []
-
-    for i in range(100):
-        card = {
-            'title': 'title ' + str(i),
-            'id': i,
-            'rating': i,
-            'text': 'text ' + str(i),
-            'tags': ['HOT', 'SUPER'],
-        }
-        cards.append(card)
+    cards = Question.objects.all()
 
     page = paginate(cards, request, per_page=10)
     visible_pages = find_visible_pages(page)

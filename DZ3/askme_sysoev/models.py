@@ -13,6 +13,7 @@ class QuestionManager(models.Manager):
 
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
+    nickname = models.CharField(max_length=255)
     avatar = models.ImageField(upload_to='uploads/', null=True, blank=True)
 
 
@@ -43,11 +44,12 @@ class Answer(models.Model):
     text = models.TextField()
     rating = models.IntegerField(default=0)
     created_user = models.ForeignKey(User, on_delete=models.CASCADE)
+    question = models.ForeignKey(Question, on_delete=models.CASCADE)
 
 
 class AnswerLike(models.Model):
     like = models.ForeignKey(Like, on_delete=models.CASCADE)
-    answer = models.ForeignKey(Answer, on_delete=models.CASCADE)  # Corrected to reference Answer
+    answer = models.ForeignKey(Answer, on_delete=models.CASCADE)  
 
     class Meta:
         unique_together = ('like', 'answer')

@@ -30,3 +30,10 @@ urlpatterns = [
     path('hot', views.hot, name='hot'),
     path('tag/<str:name>/', views.tag, name='tag'),
 ]
+
+
+from django.conf import settings
+from django.conf.urls.static import static
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -24,7 +24,7 @@
                 {{ card.text }}
             </div>
             <div class="d-flex">
-                <a href="#">answer (3)</a>
+                <a href="{% url 'question' id=card.id %}">answer ({{ card.answers_cnt }})</a>
                 <div class="tags">Tags: 
                     {% for tag in card.tags %}
                         <a href="{% url 'tag' name=tag %}">{{ tag }}</a>
