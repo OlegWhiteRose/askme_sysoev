@@ -61,4 +61,4 @@ class Tag(models.Model):
 
 class QuestionTag(models.Model):
     tag = models.ForeignKey(Tag, on_delete=models.CASCADE)
-    question = models.ForeignKey(Question, on_delete=models.CASCADE)
+    question = models.ForeignKey(Question, related_name='questiontag', on_delete=models.CASCADE)

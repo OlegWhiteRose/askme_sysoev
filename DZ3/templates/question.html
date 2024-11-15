@@ -16,7 +16,7 @@
     <article class="main-card">
         <div class="d-flex">
             <div>
-                <img class="main-avatar" alt="Avatar"></img>
+                <img class="main-avatar" alt="Avatar" src="{{ MEDIA_URL }}{{ main_card.created_user__profile__avatar  }}"></img>
                 <div class="under-image">
                     <div class="rating">{{ main_card.rating }}</div>
                     <div class="arrows">
@@ -32,7 +32,9 @@
             <div>
                 <h2>{{ main_card.title }}</h2>
                 <div class="card-title">
-                    <textarea class="main-textarea" readonly>{{ main_card.text }}</textarea>
+                    {% if main_card.text != '<None>' %}
+                        {{ main_card.text }}
+                    {% endif %}
                 </div>
                 <div class="d-flex">
                         <div class="tags">Tags:

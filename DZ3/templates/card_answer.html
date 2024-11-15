@@ -3,7 +3,7 @@
 <article class="card-answer">
     <div class="d-flex">
         <div>
-            <img class="avatar" alt="Avatar"></img>
+            <img class="avatar" alt="Avatar" src="{{ MEDIA_URL }}{{ card.created_user__profile__avatar }}"></img>
             <div class="under-image">
                 <div class="rating">{{ card.rating }}</div>
                 <div class="arrows">
@@ -16,7 +16,11 @@
                 </div>
             </div>
         </div>
-        <textarea class="main-textarea" readonly>{{ card.text }}</textarea>
+        <div class="card-title">
+            {% if card.text != '<None>' %}
+                {{ card.text }}
+            {% endif %}
+        </div>
     </div>
     <div class="form-check">
         <input class="form-check-input" type="checkbox" id="correctCheckbox">

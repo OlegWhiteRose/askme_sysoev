@@ -2,6 +2,7 @@ from django.shortcuts import render, get_object_or_404
 from django.db.models import Count
 from django.db.models import Prefetch
 from django.contrib.postgres.aggregates import ArrayAgg 
+from django import conf
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from askme_sysoev.models import *
 
@@ -41,7 +42,7 @@ def index(request):
     )
 
     cards = questions.values(
-        'id', 'title', 'text', 'rating', 'created_at', 'created_user', 'answers_cnt', 'tags'
+        'id', 'title', 'text', 'rating', 'created_at', 'created_user', 'answers_cnt', 'tags', 'created_user__profile__avatar'
     )
 
     page = paginate(cards, request, per_page=10)
@@ -50,9 +51,11 @@ def index(request):
     context = {
         'page': page,
         'visible_pages': visible_pages,
+        'MEDIA_URL': conf.settings.MEDIA_URL,
     }
 
     return render(request, 'index.html', context)
+
 
 def ask(request):
     context = {
@@ -75,18 +78,29 @@ def ask(request):
     return render(request, 'ask.html', context)
 
 
-
 def question(request, id):
-    question_obj = get_object_or_404(Question, id=id)
-    cards = Answer.objects.filter(question=question_obj).order_by('-rating')
+    question_tags = Prefetch('questiontag', queryset=QuestionTag.objects.select_related('tag'))
+
+    question_obj = get_object_or_404(
+        Question.objects.prefetch_related(question_tags).annotate(
+            tags=ArrayAgg('questiontag__tag__name', distinct=True)
+        ).values(
+            'id', 'title', 'text', 'rating', 'created_user__username', 'created_user__profile__avatar', 'tags'
+        ), id=id
+    )
+
+    cards = Answer.objects.filter(question__id=id).select_related('created_user__profile').values(
+        'id', 'text', 'rating', 'created_user__username', 'created_user__profile__avatar'
+    ).order_by('-rating')
 
     page = paginate(cards, request, per_page=3)
     visible_pages = find_visible_pages(page)
-    
+
     context = {
         'page': page,
         'visible_pages': visible_pages,
         'main_card': question_obj,
+        'MEDIA_URL': conf.settings.MEDIA_URL,
     }
 
     return render(request, 'question.html', context)
@@ -137,39 +151,51 @@ def login(request):
 
 
 def hot(request):
-    cards = Question.objects.all()
+    question_tags = Prefetch('questiontag', queryset=QuestionTag.objects.select_related('tag'))
+    questions = Question.objects.best().prefetch_related(question_tags).annotate(
+        tags=ArrayAgg('questiontag__tag__name', distinct=True), 
+        answers_cnt=Count('answer')  
+    )
+
+    cards = questions.values(
+        'id', 'title', 'text', 'rating', 'created_at', 'created_user', 'answers_cnt', 'tags', 'created_user__profile__avatar'
+    )
+
+    print(cards[0]['created_user__profile__avatar'])
 
     page = paginate(cards, request, per_page=10)
     visible_pages = find_visible_pages(page)
-    
+
     context = {
         'page': page,
         'visible_pages': visible_pages,
+        'MEDIA_URL': conf.settings.MEDIA_URL,
     }
 
     return render(request, 'hot.html', context)
 
 
 def tag(request, name):
-    cards = []
+    tag_obj = get_object_or_404(Tag, name=name)
+    question_tags = Prefetch('questiontag', queryset=QuestionTag.objects.select_related('tag'))
 
-    for i in range(100):
-        card = {
-            'title': 'title ' + str(i),
-            'id': i,
-            'rating': i,
-            'text': 'text ' + str(i),
-            'tags': [name],
-        }
-        cards.append(card)
+    questions = Question.objects.newest().prefetch_related(question_tags).annotate(
+        tags=ArrayAgg('questiontag__tag__name', distinct=True), 
+        answers_cnt=Count('answer')
+    ).filter(questiontag__tag=tag_obj)
+
+    cards = questions.values(
+        'id', 'title', 'text', 'rating', 'created_at', 'created_user', 'answers_cnt', 'tags', 'created_user__profile__avatar'
+    )
 
     page = paginate(cards, request, per_page=10)
     visible_pages = find_visible_pages(page)
-    
+
     context = {
         'page': page,
         'visible_pages': visible_pages,
         'tag': name,
+        'MEDIA_URL': conf.settings.MEDIA_URL,
     }
 
     return render(request, 'tag.html', context)
