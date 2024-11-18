@@ -43,8 +43,8 @@ class QuestionLike(models.Model):
 class Answer(models.Model):
     text = models.TextField()
     rating = models.IntegerField(default=0)
-    created_user = models.ForeignKey(User, on_delete=models.CASCADE)
-    question = models.ForeignKey(Question, on_delete=models.CASCADE)
+    created_user = models.ForeignKey(User, related_name='answer', on_delete=models.CASCADE)
+    question = models.ForeignKey(Question, related_name='answer', on_delete=models.CASCADE)
 
 
 class AnswerLike(models.Model):

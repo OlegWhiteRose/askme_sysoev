@@ -6,7 +6,8 @@
             <img class="avatar" alt="Avatar" src="{{ MEDIA_URL }}{{ card.created_user__profile__avatar }}"></img>
             <div class="under-image">
                 <div class="rating">  
-                    {{ card.rating }}
+                    {% load filter_rating %}
+                    {{ card.rating|format_rating }}
                 </div> 
                 <div class="arrows"> 
                     <button class="dislike-like">

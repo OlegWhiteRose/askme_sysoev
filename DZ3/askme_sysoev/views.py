@@ -38,7 +38,7 @@ def index(request):
     question_tags = Prefetch('questiontag', queryset=QuestionTag.objects.select_related('tag'))
     questions = Question.objects.newest().prefetch_related(question_tags).annotate(
         tags=ArrayAgg('questiontag__tag__name', distinct=True), 
-        answers_cnt=Count('answer')  
+        answers_cnt=Count('answer', distinct=True)
     )
 
     cards = questions.values(
@@ -154,7 +154,7 @@ def hot(request):
     question_tags = Prefetch('questiontag', queryset=QuestionTag.objects.select_related('tag'))
     questions = Question.objects.best().prefetch_related(question_tags).annotate(
         tags=ArrayAgg('questiontag__tag__name', distinct=True), 
-        answers_cnt=Count('answer')  
+        answers_cnt=Count('answer', distinct=True)  
     )
 
     cards = questions.values(

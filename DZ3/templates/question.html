@@ -13,12 +13,15 @@
 {% endblock %}
 
 {% block cards %}
-    <article class="main-card">
+    <article class="main-card" id="main_card">
         <div class="d-flex">
             <div>
                 <img class="main-avatar" alt="Avatar" src="{{ MEDIA_URL }}{{ main_card.created_user__profile__avatar  }}"></img>
                 <div class="under-image">
-                    <div class="rating">{{ main_card.rating }}</div>
+                    <div class="rating">
+                        {% load filter_rating %}
+                        {{ main_card.rating|format_rating }}
+                    </div>
                     <div class="arrows">
                         <button class="dislike-like">
                             <img src="{% static 'img/arrow_up_12.png' %}">
@@ -54,10 +57,10 @@
 {% endblock %}
 
 {% block additional_blocks %}
-    <div class="bottom-line"></div>
+    <div class="bottom-line" id="bottom_line"></div>
                 
     <div>
-        <textarea class="comment" placeholder="Enter your answer here.."></textarea>
+        <textarea class="comment" id="comment" placeholder="Enter your answer here.."></textarea>
     </div>
 
     <button class="button-answer">
@@ -67,6 +70,5 @@
 {% endblock %}
 
 {% block additional_scripts %}
-    <script src="{% static 'js/resize_textarea.js' %}"></script>
-    <script src="{% static 'js/resize_comment_area.js' %}"></script>
+    <script src="{% static 'js/resizer.js' %}"></script>
 {% endblock%}

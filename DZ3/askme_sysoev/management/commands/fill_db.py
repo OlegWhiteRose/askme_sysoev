@@ -6,10 +6,17 @@ from askme_sysoev.management.commands.fake_likes import *
 
 class Command(BaseCommand):
     def add_arguments(self, parser):
-        parser.add_argument('ratio', type=int, help='Коэффициент заполнения сущностей')
+        parser.add_argument('ratio', type=int)
+        parser.add_argument('type', type=str)
 
 
     def handle(self, *args, **kwargs):
         ratio = kwargs['ratio']
-        RealUsers(ratio, self)
+        type = kwargs['type']
+
+        if type == 'real':
+            RealUsers(ratio, self)
+        elif type == 'fake':
+            FakeUsers(ratio, self)
+
         fill_likes(ratio * 200)
