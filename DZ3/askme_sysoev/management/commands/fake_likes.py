@@ -1,10 +1,9 @@
 import random
 from django.contrib.auth.models import User
-from askme_sysoev.models import Question, Answer, Like, QuestionLike, AnswerLike
+from askme_sysoev.models import Question, Answer, QuestionLike, AnswerLike
 from django.db import transaction
 
 def fill_likes(ratio):
-    Like.objects.all().delete()
     QuestionLike.objects.all().delete()
     AnswerLike.objects.all().delete()
 
@@ -20,33 +19,43 @@ def fill_likes(ratio):
     question_list = list(questions)
     answer_list = list(answers)
 
-    likes = []
     questions_likes = []
     answers_likes = []
 
+    def gen_unique(q, param1, param2):
+        key = random.choice(param1)
+        value = random.choice(param2)
+        if key not in q:
+            q[key] = set()
+
+        while value in q[key]:
+            key = random.choice(param1)
+            value = random.choice(param2)
+
+        q[key].add(value)
+
+        return key, value
+
     with transaction.atomic():
+        q = {}
         for _ in range(ratio):
-            like = Like(
+            user, question = gen_unique(q, user_list, question_list)
+            question_like = QuestionLike(
                 mark=True,
-                user=random.choice(user_list) 
+                user=user, 
+                question=question 
             )
-            likes.append(like)
+            questions_likes.append(question_like)
+            
+            user, answer = gen_unique(q, user_list, answer_list)
+            answer_like = AnswerLike(
+                mark=True,
+                user=user, 
+                answer=answer
+            )
+            answers_likes.append(answer_like)
 
-            if random.choice([True, False]):
-                question_like = QuestionLike(
-                    like=like,
-                    question=random.choice(question_list) 
-                )
-                questions_likes.append(question_like)
-            else:
-                answer_like = AnswerLike(
-                    like=like,
-                    answer=random.choice(answer_list) 
-                )
-                answers_likes.append(answer_like)
-
-        Like.objects.bulk_create(likes)
         QuestionLike.objects.bulk_create(questions_likes)
         AnswerLike.objects.bulk_create(answers_likes)
 
-    print(f"Created {len(likes)} likes!")
+    print(f"Created {len(questions_likes) + len(answers_likes)} likes!")

@@ -17,11 +17,6 @@ class Profile(models.Model):
     avatar = models.ImageField(upload_to='uploads/', null=True, blank=True)
 
 
-class Like(models.Model):
-    user = models.ForeignKey(User, on_delete=models.CASCADE) 
-    mark = models.BooleanField()
-
-
 class Question(models.Model):
     title = models.CharField(max_length=255)
     text = models.TextField()
@@ -33,11 +28,12 @@ class Question(models.Model):
 
 
 class QuestionLike(models.Model):
-    like = models.ForeignKey(Like, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE) 
+    mark = models.BooleanField()
     question = models.ForeignKey(Question, on_delete=models.CASCADE)
 
     class Meta:
-        unique_together = ('like', 'question')
+        unique_together = ('user', 'question')
 
 
 class Answer(models.Model):
@@ -48,11 +44,12 @@ class Answer(models.Model):
 
 
 class AnswerLike(models.Model):
-    like = models.ForeignKey(Like, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE) 
+    mark = models.BooleanField()
     answer = models.ForeignKey(Answer, on_delete=models.CASCADE)  
 
     class Meta:
-        unique_together = ('like', 'answer')
+        unique_together = ('user', 'answer')
 
 
 class Tag(models.Model):

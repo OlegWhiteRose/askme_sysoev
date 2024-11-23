@@ -19,4 +19,4 @@ class Command(BaseCommand):
         elif type == 'fake':
             FakeUsers(ratio, self)
 
-        fill_likes(ratio * 200)
+        fill_likes(ratio * 100)

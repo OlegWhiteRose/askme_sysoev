@@ -161,8 +161,6 @@ def hot(request):
         'id', 'title', 'text', 'rating', 'created_at', 'created_user', 'answers_cnt', 'tags', 'created_user__profile__avatar'
     )
 
-    print(cards[0]['created_user__profile__avatar'])
-
     page = paginate(cards, request, per_page=10)
     visible_pages = find_visible_pages(page)
 
