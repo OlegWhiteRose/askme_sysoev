@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block additional_links %}
+    <link rel="stylesheet" href="{% static 'css/question.css' %}">
+{% endblock %}
+
+{% block user %}
+    {% include 'login_register.html' %}
+{% endblock %}
+
+{% block header %}
+{% endblock %}
+
+{% block cards %}
+    <article class="main-card" id="main_card">
+        <div class="d-flex">
+            <div>
+                <img class="main-avatar" alt="Avatar" src="{{ MEDIA_URL }}{{ main_card.created_user__profile__avatar  }}"></img>
+                <div class="under-image">
+                    <div class="rating">
+                        {% load filter_rating %}
+                        {{ main_card.rating|format_rating }}
+                    </div>
+                    <div class="arrows">
+                        <button class="dislike-like">
+                            <img src="{% static 'img/arrow_up_12.png' %}">
+                        </button>
+                        <button class="dislike-like">
+                            <img src="{% static 'img/arrow_down_12.png' %}">
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div>
+                <h2>{{ main_card.title }}</h2>
+                <div class="card-title">
+                    {% if main_card.text != '<None>' %}
+                        {{ main_card.text }}
+                    {% endif %}
+                </div>
+                <div class="d-flex">
+                        <div class="tags">Tags:
+                            {% for tag in main_card.tags %}
+                                <a href="{% url 'tag' name=tag %}">{{ tag }}</a>
+                            {% endfor %}
+                        </div>
+                </div>
+            </div>
+        </div>
+    </article>
+
+    {% for card in page.object_list %}
+        {% include 'card_answer.html' %}
+    {% endfor %}
+
+{% endblock %}
+
+{% block additional_blocks %}
+    <div class="bottom-line" id="bottom_line"></div>
+                
+    <div>
+        <textarea class="comment" id="comment" placeholder="Enter your answer here.."></textarea>
+    </div>
+
+    <button class="button-answer">
+        Answer
+    </button>
+    </div>
+{% endblock %}
+
+{% block additional_scripts %}
+    <script src="{% static 'js/resizer.js' %}"></script>
+{% endblock%}

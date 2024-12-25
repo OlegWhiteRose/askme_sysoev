@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="ru">
+    <head>
+        <meta charset="UTF-8">
+        <title>AskSysoev</title>
+
+        {% load static %}
+
+        <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+        <link rel="stylesheet" href="{% static 'css/base.css' %}">
+
+        {% block additional_links %}
+        {% endblock %}
+    </head>
+    <body>
+        {% block navbar %}
+        <nav class="navbar navbar-expand-lg navbar-custom">
+            <div class="container">
+                <a class="navbar-brand" href="{% url 'index' %}">AskSysoev</a>
+                <form class="d-flex">
+                    <input class="form-control me-2 search-bar" type="search" placeholder="Search">
+                    <button class="btn ask-btn" type="submit">ASK!</button>
+                </form>
+                <div class="d-flex gap-1">
+                    {% block user %}
+                        {% include 'user.html' %}
+                    {% endblock %}
+                </div>
+            </div>
+        </nav>
+        {% endblock %}
+    
+        <div class="container main">
+            <div class="container d-flex">
+                {% block content %}
+                <div class="col-lg-8">
+                    {% block header %}
+                    <div class="d-flex nav-q">
+                        <h4>New Questions</h4>
+                        <a href="{% url 'hot' %}" class="hot-q">Hot Questions</a>
+                    </div>
+                    {% endblock %}
+
+                    {% block cards %}
+                        {% for card in page.object_list %}
+                            {% include 'card.html' %}
+                        {% endfor %}
+                    {% endblock %}
+                    
+                    {% block pagination %}
+                        {% include 'pagination.html' %}
+                    {% endblock %}
+                </div>
+                {% endblock %}
+                
+                {% block right_column %}
+                <div class="col-lg right-col">
+                    <div class="sidebar-section">
+                        <h3>Popular Tags</h3>
+                        <div>
+                            <a href="{% url 'tag' name='perl' %}" class="tag">perl</a>
+                            <a href="{% url 'tag' name='python' %}" class="tag">python</a>
+                            <a href="{% url 'tag' name='TechnoPark' %}" class="tag">TechnoPark</a>
+                            <a href="{% url 'tag' name='MySQL' %}" class="tag">MySQL</a>
+                            <a href="{% url 'tag' name='django' %}" class="tag">django</a>
+                            <a href="{% url 'tag' name='Mail.Ru' %}" class="tag">Mail.Ru</a>
+                            <a href="{% url 'tag' name='Voloshin' %}" class="tag">Voloshin</a>
+                            <a href="{% url 'tag' name='Firefox' %}" class="tag">Firefox</a>
+                        </div>
+                    </div>
+
+                    <div class="sidebar-section">
+                        <h3>Best members</h3>
+                        <div class="best-members">
+                            <a href="#"> Mr. Freeman </a>
+                            <a href="#"> Dr. House </a>
+                            <a href="#"> Bender </a>
+                            <a href="#"> Quinn Victoria </a>
+                            <a href="#"> V. Pupkin </a>
+                        </div>
+                    </div>
+                </div>
+                {% endblock %}
+            </div>
+            {% block additional_blocks %}
+            {% endblock %}
+        </div>
+
+    {% block additional_scripts %}
+    {% endblock %}
+    <script src="{% static 'js/bootstrap.min.js' %}"></script>
+</body>
+</html>

@@ -1,0 +1,56 @@
+.main-card {
+    width: 100%;
+    margin-bottom: 30px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid black;
+}
+
+.card-answer {
+    border: 2px solid black;
+    margin-bottom: 20px;
+    padding: 10px;
+}
+
+.bottom-line {
+    display: block;
+    height: 2px;
+    background-color: black; 
+    margin-top: 20px; 
+    margin-left: 10px;
+}
+
+.main-avatar {
+    width: 100px;
+    height: 100px;
+    background-color: #ddd;
+    display: inline-block;
+    margin-right: 40px;
+}
+
+.main-textarea {
+    width: 600px; 
+    height: auto;
+    resize: none;
+    border: none; 
+    background-color: #ffffff; 
+    padding: 10px; 
+    outline: none; 
+    overflow: hidden;
+    line-height: 1;
+}
+
+.form-check {
+    margin-left: 70px;
+}
+
+.button-answer {
+    margin-left: 10px;
+    margin-top: 10px;
+}
+
+.comment {
+    margin-left: 10px;
+    margin-top: 10px;
+    resize: none;
+    font-size: 14px
+}

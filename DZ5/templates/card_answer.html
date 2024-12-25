@@ -1,0 +1,32 @@
+{% load static %}
+
+<article class="card-answer">
+    <div class="d-flex">
+        <div>
+            <img class="avatar" alt="Avatar" src="{{ MEDIA_URL }}{{ card.created_user__profile__avatar }}"></img>
+            <div class="under-image">
+                <div class="rating">
+                    {% load filter_rating %}
+                    {{ card.rating|format_rating }}
+                </div>
+                <div class="arrows">
+                    <button class="dislike-like">
+                        <img src="{% static 'img/arrow_up_12.png' %}">
+                    </button>
+                    <button class="dislike-like">
+                        <img src="{% static 'img/arrow_down_12.png' %}">
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div class="card-title">
+            {% if card.text != '<None>' %}
+                {{ card.text }}
+            {% endif %}
+        </div>
+    </div>
+    <div class="form-check">
+        <input class="form-check-input" type="checkbox" id="correctCheckbox">
+        <label class="form-check-label checkbox-label" for="correctCheckbox">Correct!</label>
+    </div>
+</article>

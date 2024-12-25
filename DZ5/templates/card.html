@@ -1,0 +1,39 @@
+{% load static %}
+
+<article class="card">
+    <div class="d-flex">
+        <div>
+            <img class="avatar" alt="Avatar" src="{{ MEDIA_URL }}{{ card.created_user__profile__avatar }}"></img>
+            <div class="under-image">
+                <div class="rating">  
+                    {% load filter_rating %}
+                    {{ card.rating|format_rating }}
+                </div> 
+                <div class="arrows"> 
+                    <button class="dislike-like">
+                        <img src="{% static 'img/arrow_up_12.png' %}">
+                    </button>
+                    <button class="dislike-like">
+                        <img src="{% static 'img/arrow_down_12.png' %}"> 
+                    </button>
+                </div>
+            </div>
+        </div>
+        <div>
+            <a href="{% url 'question' id=card.id %}">{{ card.title }}</a>
+            <div class="card-title">
+                {% if card.text != '<None>' %}
+                    {{ card.text|slice:":100" }}..
+                {% endif %}
+            </div>
+            <div class="d-flex">
+                <a href="{% url 'question' id=card.id %}">answer ({{ card.answers_cnt }})</a>
+                <div class="tags">Tags: 
+                    {% for tag in card.tags %}
+                        <a href="{% url 'tag' name=tag %}">{{ tag }}</a>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</article>

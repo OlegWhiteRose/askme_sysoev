@@ -1,0 +1,23 @@
+{% if page.paginator.num_pages != 1 %}
+<div class="pagination">
+    {% if page.has_previous %}
+        <a href="?page={{ page.previous_page_number }}" class="fs-4">&laquo;</a>
+    {% endif %}
+
+    {% for num in visible_pages %}
+        {% if num == '...' %}
+            <span class="fs-4">...</span>
+        {% else %}
+            {% if page.number == num %}
+                <a href="?page={{ num }}" class="fs-4 border border-dark px-2">{{ num }}</a>
+            {% else %}
+                <a href="?page={{ num }}" class="fs-4">{{ num }}</a>
+            {% endif %}
+        {% endif %}
+    {% endfor %}
+
+    {% if page.has_next %}
+        <a href="?page={{ page.next_page_number }}" class="fs-4">&raquo;</a>
+    {% endif %}
+</div>
+{% endif %}

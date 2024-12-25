@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block additional_links %}
+    <link rel="stylesheet" href="{% static 'css/settings.css' %}">
+{% endblock %}
+
+{% block user %}
+    {% include 'login_register.html' %}
+{% endblock %}
+
+{% block content %}
+<div class="col-lg-8">
+    <h3>Settings: Dr. Pepper</h3>
+    <div class="d-flex">
+        <div>
+            <div class="mt-5">Login</div>
+            <div class="mt-4">Email</div>
+            <div class="mt-4">NickName</div>
+            <div class="mt-4">Upload Avatar</div>
+        </div>
+        
+        <div class="ms-5 w-50">
+            <form method="POST" action="{% url 'settings' %}">
+                {% csrf_token %}
+                <div><input class="mt-5"></div>
+                <div><input class="mt-4"></div>
+                <div><input class="mt-4"></div>
+                <img class="upload-avatar mt-4" id="avatar" alt="Avatar"></img>
+                <div class="input-group mt-3">
+                    <input id="file-path" placeholder="Choose file..." readonly>
+                    <input type="file" id="file-input" class="d-none">
+                    <button class="btn btn-outline-info ms-1" id="choose-btn">Choose</button>
+                </div>
+                <button type="submit" class="btn btn-outline-success mt-4">Save</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block additional_scripts %}
+    <script src="{% static 'js/file_chooser.js' %}"></script>
+{% endblock %}
