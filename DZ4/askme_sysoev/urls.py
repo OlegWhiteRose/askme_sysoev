@@ -19,6 +19,8 @@ from django.urls import path
 from django.urls import path
 from askme_sysoev import views
 
+from django.contrib.auth import views as auth_views
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', views.index, name='index'),
@@ -29,6 +31,7 @@ urlpatterns = [
     path('signup', views.register, name='register'),
     path('hot', views.hot, name='hot'),
     path('tag/<str:name>/', views.tag, name='tag'),
+    path('logout/', auth_views.LogoutView.as_view(), name='logout'),
 ]
 
 

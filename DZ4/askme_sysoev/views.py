@@ -1,10 +1,13 @@
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 from django.db.models import Count
 from django.db.models import Prefetch
 from django.contrib.postgres.aggregates import ArrayAgg 
+from django.contrib.auth import authenticate, login as auth_login
 from django import conf
+from django.contrib.auth.hashers import check_password
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from askme_sysoev.models import *
+from .forms import *
 
 
 def paginate(objects_list, request, per_page=10):
@@ -130,24 +133,28 @@ def register(request):
 
 
 def login(request):
-    context = {
-        'errors': []
-    }
+    context = {'errors': []}
 
     if request.method == 'POST':
-        login = request.POST.get('login')
-        password = request.POST.get('password')
+        form = LoginForm(request.POST)
+        if form.is_valid():
+            username = form.cleaned_data['username']
+            password = form.cleaned_data['password']
 
-        rules = (
-            login and password and 
-            isinstance(login, str) and
-            isinstance(password, str)
-        )
-        if rules:
-            if password != '1234': # Для примера
-                context['errors'].append('Sorry, wrong password!')
+            user = authenticate(username=username, password=password)
+            if user is not None:
+                auth_login(request, user)
+                return redirect('index') 
+            else:
+                context['errors'].append('Неправильный логин или пароль')
+        else:
+            context['errors'].extend(form.errors.values())
+    else:
+        form = LoginForm()
 
+    context['form'] = form
     return render(request, 'login.html', context)
+
 
 
 def hot(request):

@@ -1,6 +1,10 @@
 <img alt="Avatar" class="avatar">
 <div>  
-    <div> Dr. Pepper </div>
+    <div> {{ user.username }} </div>
     <a href="{% url 'settings' %}">settings</a>
-    <a href="#">log out</a>
+
+    <form method="POST" action="{% url 'logout' %}" style="display:inline;">
+        {% csrf_token %}
+        <button type="submit" style="background: none; border: none; color: #007bff; text-decoration: underline; cursor: pointer;">log out</button>
+    </form>
 </div>
