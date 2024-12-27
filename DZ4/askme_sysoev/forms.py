@@ -1,6 +1,7 @@
 from django import forms
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate
+from .models import *
 
 class LoginForm(forms.Form):
     username = forms.CharField(
@@ -18,4 +19,10 @@ class LoginForm(forms.Form):
             'name': 'password'
         })
     )
-    
+
+class AnswerForm(forms.ModelForm):
+    class Meta:
+        model = Answer
+        fields = ['text']  
+
+    text = forms.CharField(widget=forms.Textarea(attrs={'id': 'comment', 'class': 'comment', 'placeholder': 'Enter your answer here..'}))

@@ -99,18 +99,34 @@ def question(request, id):
     page = paginate(cards, request, per_page=3)
     visible_pages = find_visible_pages(page)
 
+    if request.user.is_authenticated and request.method == 'POST':
+        form = AnswerForm(request.POST)
+        if form.is_valid():
+            answer = form.save(commit=False)
+            answer.question = get_object_or_404(Question, id=id)
+            answer.created_user = request.user  
+            answer.save()
+            return redirect('question', id=id) 
+    else:
+        form = AnswerForm()
+
+
     context = {
         'page': page,
         'visible_pages': visible_pages,
         'main_card': question_obj,
         'MEDIA_URL': conf.settings.MEDIA_URL,
+        'form': form,
     }
 
     return render(request, 'question.html', context)
 
 
 def settings(request):
-    return render(request, 'settings.html')
+    context = {
+        'MEDIA_URL': conf.settings.MEDIA_URL,
+    }
+    return render(request, 'settings.html', context)
 
 
 def register(request):

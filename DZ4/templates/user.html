@@ -1,4 +1,4 @@
-<img alt="Avatar" class="avatar">
+<img class="avatar" alt="Avatar" src="{{ MEDIA_URL }}{{ user.profile.avatar }}">
 <div>  
     <div> {{ user.username }} </div>
     <a href="{% url 'settings' %}">settings</a>

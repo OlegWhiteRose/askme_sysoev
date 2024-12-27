@@ -55,14 +55,16 @@
 {% block additional_blocks %}
     <div class="bottom-line" id="bottom_line"></div>
                 
-    <div>
-        <textarea class="comment" id="comment" placeholder="Enter your answer here.."></textarea>
-    </div>
-
-    <button class="button-answer">
-        Answer
-    </button>
-    </div>
+    <form method="POST">
+        {% csrf_token %}
+        <div>
+            {{ form.text }}
+        </div>
+    
+        <button class="button-answer" type="submit">
+            Answer
+        </button>
+    </form>
 {% endblock %}
 
 {% block additional_scripts %}
