@@ -5,10 +5,6 @@
     <link rel="stylesheet" href="{% static 'css/settings.css' %}">
 {% endblock %}
 
-{% block user %}
-    {% include 'login_register.html' %}
-{% endblock %}
-
 {% block content %}
 <div class="col-lg-8">
     <h3>Settings: Dr. Pepper</h3>
@@ -21,7 +17,7 @@
         </div>
         
         <div class="ms-5 w-50">
-            <form method="POST" action="{% url 'settings' %}">
+            <form method="POST" action="{% url 'settings' %}" enctype="multipart/form-data">
                 {% csrf_token %}
                 <div><input class="mt-5"></div>
                 <div><input class="mt-4"></div>
@@ -29,8 +25,7 @@
                 <img class="upload-avatar mt-4" id="avatar" alt="Avatar"></img>
                 <div class="input-group mt-3">
                     <input id="file-path" placeholder="Choose file..." readonly>
-                    <input type="file" id="file-input" class="d-none">
-                    <button class="btn btn-outline-info ms-1" id="choose-btn">Choose</button>
+                    <input name="avatar" type="file" id="file-input" accept="image/*">
                 </div>
                 <button type="submit" class="btn btn-outline-success mt-4">Save</button>
             </form>
@@ -40,5 +35,8 @@
 {% endblock %}
 
 {% block additional_scripts %}
+    <script>
+        const uploadUrl = "{% url 'upload_image' %}";
+    </script>
     <script src="{% static 'js/file_chooser.js' %}"></script>
 {% endblock %}

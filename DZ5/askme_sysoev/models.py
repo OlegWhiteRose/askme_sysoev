@@ -59,3 +59,9 @@ class Tag(models.Model):
 class QuestionTag(models.Model):
     tag = models.ForeignKey(Tag, on_delete=models.CASCADE)
     question = models.ForeignKey(Question, related_name='questiontag', on_delete=models.CASCADE)
+
+
+class Image(models.Model):
+    file = models.ImageField(upload_to='')
+    name = models.CharField(max_length=255)
+    uploaded_at = models.DateTimeField(auto_now_add=True)

@@ -1,10 +1,30 @@
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, redirect
 from django.db.models import Count
 from django.db.models import Prefetch
 from django.contrib.postgres.aggregates import ArrayAgg 
+from django.contrib.auth import authenticate, login as auth_login
 from django import conf
+from django.contrib.auth.hashers import check_password
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from askme_sysoev.models import *
+from .forms import *
+from django.db import transaction
+from django.http import JsonResponse
+from .models import Image  
+
+
+def upload_image(request):
+    if request.method == 'POST' and request.FILES.get('file'):
+        print("In image")
+        form = ImageForm(request.POST, request.FILES)
+        
+        if form.is_valid():
+            image = form.save()
+            
+            return JsonResponse({'success': True, 'file_url': image.file.url})
+        else:
+            return JsonResponse({'success': False, 'errors': form.errors})
+    return JsonResponse({'success': False, 'error': 'No file uploaded'})
 
 
 def paginate(objects_list, request, per_page=10):
@@ -58,24 +78,31 @@ def index(request):
 
 
 def ask(request):
-    context = {
-        'errors': []
-    }
+    if request.user.is_authenticated and request.method == 'POST':
+        form = QuestionForm(request.POST)
+        if form.is_valid():
+            question = form.save(commit=False)
+            question.created_user = request.user 
+            question.save()
 
-    if request.method == 'POST':
-        title = request.POST.get('title')
-        text = request.POST.get('text')
-        tags = request.POST.get('tags')
+            tags = request.POST.get('tags')
+            if tags:
+                tag_names = [tag.strip() for tag in tags.split(',')] 
+                for tag_name in tag_names:
+                    tag, _ = Tag.objects.get_or_create(name=tag_name)
+                    QuestionTag.objects.create(question=question, tag=tag)
 
-        # Для примера
-        if not title:
-            context['errors'].append('Sorry, there is no title!')
-        if not text:
-            context['errors'].append('Sorry, there is no text!')
-        if not tags:
-            context['errors'].append('Sorry, there is no tags!')
+            return redirect('question', id=question.id)  
+        else:
+            context = {
+                'form': form,
+                'errors': form.errors, 
+            }
+            return render(request, 'ask.html', context)
+    else:
+        form = QuestionForm()
 
-    return render(request, 'ask.html', context)
+    return render(request, 'ask.html', {'form': form})
 
 
 def question(request, id):
@@ -96,58 +123,107 @@ def question(request, id):
     page = paginate(cards, request, per_page=3)
     visible_pages = find_visible_pages(page)
 
+    if request.user.is_authenticated and request.method == 'POST':
+        form = AnswerForm(request.POST)
+        if form.is_valid():
+            answer = form.save(commit=False)
+            answer.question = get_object_or_404(Question, id=id)
+            answer.created_user = request.user  
+            answer.save()
+            return redirect('question', id=id) 
+    else:
+        form = AnswerForm()
+
+
     context = {
         'page': page,
         'visible_pages': visible_pages,
         'main_card': question_obj,
         'MEDIA_URL': conf.settings.MEDIA_URL,
+        'form': form,
     }
 
     return render(request, 'question.html', context)
 
 
 def settings(request):
-    return render(request, 'settings.html')
+    context = {
+        'MEDIA_URL': conf.settings.MEDIA_URL,
+    }
+
+    if request.user.is_authenticated and request.method == 'POST':
+        with transaction.atomic():  
+            user = request.user 
+            profile = user.profile  
+
+            if 'avatar' in request.FILES:
+                avatar_file = request.FILES['avatar']
+                image = Image.objects.create(name=f"{user.username}_avatar", file=avatar_file)
+
+                profile.avatar = image.file
+                profile.save()
+
+    return render(request, 'settings.html', context)
 
 
 def register(request):
-    context = {
-        'errors': []
-    }
+    context = {}
 
-    if request.method == 'POST':
-        email = request.POST.get('email')
+    if not request.user.is_authenticated and request.method == 'POST':
+        form = RegistrationForm(request.POST, request.FILES)
 
-        rules = (
-            email and 
-            isinstance(email, str)
-        )
-        if rules:
-            if email.strip() == 'dr.pepper@mail.ru': # Для примера
-                context['errors'].append('Sorry, this email address already registered!')
+        if form.is_valid():
+            print("In reg")
+            with transaction.atomic():  
+                user = User.objects.create_user(
+                    username=form.cleaned_data['login'],
+                    email=form.cleaned_data['email'],
+                    password=form.cleaned_data['password'],
+                )
 
+                profile = Profile.objects.create(user=user)
+
+                if 'avatar' in request.FILES:
+                    avatar_file = request.FILES['avatar']
+                    image = Image.objects.create(name=f"{user.username}_avatar", file=avatar_file)
+                    profile.avatar = image.file  
+                    profile.save()
+
+            user = authenticate(username=form.cleaned_data['login'], password=form.cleaned_data['password'])
+            auth_login(request, user)
+            return redirect('index')  
+        else:
+            context['errors'] = form.errors 
+    else:
+        form = RegistrationForm()
+
+    context['form'] = form
     return render(request, 'register.html', context)
 
 
 def login(request):
-    context = {
-        'errors': []
-    }
+    context = {'errors': []}
 
     if request.method == 'POST':
-        login = request.POST.get('login')
-        password = request.POST.get('password')
+        form = LoginForm(request.POST)
+        if form.is_valid():
+            username = form.cleaned_data['username']
+            password = form.cleaned_data['password']
 
-        rules = (
-            login and password and 
-            isinstance(login, str) and
-            isinstance(password, str)
-        )
-        if rules:
-            if password != '1234': # Для примера
-                context['errors'].append('Sorry, wrong password!')
+            user = authenticate(username=username, password=password)
+            if user is not None:
+                auth_login(request, user)
+                return redirect('index') 
+            else:
+                context['errors'].append('Неправильный логин или пароль')
+        else:
+            context['errors'].extend(form.errors.values())
+    else:
+        form = LoginForm()
 
+    context['form'] = form
     return render(request, 'login.html', context)
+
 
 
 def hot(request):

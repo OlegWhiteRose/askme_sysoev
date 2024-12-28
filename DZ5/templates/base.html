@@ -23,7 +23,11 @@
                 </form>
                 <div class="d-flex gap-1">
                     {% block user %}
-                        {% include 'user.html' %}
+                        {% if user.is_authenticated %}
+                            {% include 'user.html' %}
+                        {% else %}
+                            {% include 'login_register.html' %}
+                        {% endif %}
                     {% endblock %}
                 </div>
             </div>
