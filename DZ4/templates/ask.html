@@ -18,13 +18,13 @@
                 {% for error in errors %}
                     <div class="mt-1 mb-1" style="color: red">{{ error }}</div>
                 {% endfor %}
-                <div>Title <input name="title" class="ms-5 w-50" placeholder="Enter Title of your answer here.."></div>
+                <div>Title {{ form.title }}</div>
                 <div class="d-flex mt-3 justify-content-center">Text 
                 <div class="text w-50">
-                    <textarea name="text" class="text" placeholder="Enter content of your answer here.."></textarea>
+                    {{ form.text }}
                 </div>
                 </div>
-                <div>Tags <input name="tags" class="ms-5 w-50 mt-3" placeholder="Put tags here.."></div>
+                <div>Tags {{ form.tags }}</div>
             </div>
             <button class="ask-button mt-3" type="submit">ASK!</button>
         </form>

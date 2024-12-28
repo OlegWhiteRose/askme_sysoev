@@ -61,24 +61,31 @@ def index(request):
 
 
 def ask(request):
-    context = {
-        'errors': []
-    }
+    if request.user.is_authenticated and request.method == 'POST':
+        form = QuestionForm(request.POST)
+        if form.is_valid():
+            question = form.save(commit=False)
+            question.created_user = request.user 
+            question.save()
 
-    if request.method == 'POST':
-        title = request.POST.get('title')
-        text = request.POST.get('text')
-        tags = request.POST.get('tags')
+            tags = request.POST.get('tags')
+            if tags:
+                tag_names = [tag.strip() for tag in tags.split(',')] 
+                for tag_name in tag_names:
+                    tag, _ = Tag.objects.get_or_create(name=tag_name)
+                    QuestionTag.objects.create(question=question, tag=tag)
 
-        # Для примера
-        if not title:
-            context['errors'].append('Sorry, there is no title!')
-        if not text:
-            context['errors'].append('Sorry, there is no text!')
-        if not tags:
-            context['errors'].append('Sorry, there is no tags!')
+            return redirect('question', id=question.id)  
+        else:
+            context = {
+                'form': form,
+                'errors': form.errors, 
+            }
+            return render(request, 'ask.html', context)
+    else:
+        form = QuestionForm()
 
-    return render(request, 'ask.html', context)
+    return render(request, 'ask.html', {'form': form})
 
 
 def question(request, id):
@@ -130,21 +137,31 @@ def settings(request):
 
 
 def register(request):
-    context = {
-        'errors': []
-    }
+    context = {}
 
-    if request.method == 'POST':
-        email = request.POST.get('email')
+    if not request.user.is_authenticated and request.method == 'POST':
+        form = RegistrationForm(request.POST, request.FILES)
 
-        rules = (
-            email and 
-            isinstance(email, str)
-        )
-        if rules:
-            if email.strip() == 'dr.pepper@mail.ru': # Для примера
-                context['errors'].append('Sorry, this email address already registered!')
+        if form.is_valid():
+            user = User.objects.create_user(
+                username=form.cleaned_data['login'],
+                email=form.cleaned_data['email'],
+                password=form.cleaned_data['password'],
+            )
 
+            if 'avatar' in request.FILES: # в будущем будет
+                user.profile.avatar = request.FILES['avatar'] 
+                user.profile.save()
+
+            user = authenticate(username=form.cleaned_data['login'], password=form.cleaned_data['password'])
+            auth_login(request, user)
+            return redirect('index')  
+        else:
+            context['errors'] = form.errors 
+    else:
+        form = RegistrationForm()
+
+    context['form'] = form
     return render(request, 'register.html', context)
 
 
