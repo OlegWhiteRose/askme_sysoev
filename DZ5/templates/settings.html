@@ -8,6 +8,7 @@
 {% block content %}
 <div class="col-lg-8">
     <h3>Settings: Dr. Pepper</h3>
+
     <div class="d-flex">
         <div>
             <div class="mt-5">Login</div>
@@ -15,22 +16,51 @@
             <div class="mt-4">NickName</div>
             <div class="mt-4">Upload Avatar</div>
         </div>
-        
+
         <div class="ms-5 w-50">
             <form method="POST" action="{% url 'settings' %}" enctype="multipart/form-data">
                 {% csrf_token %}
-                <div><input class="mt-5"></div>
-                <div><input class="mt-4"></div>
-                <div><input class="mt-4"></div>
-                <img class="upload-avatar mt-4" id="avatar" alt="Avatar"></img>
+                
+                <div>
+                    <input class="mt-5" type="text" name="login" value="{{ form.login.value }}">
+                </div>
+                
+                <div>
+                    <input class="mt-4" type="email" name="email" value="{{ form.email.value }}">
+                </div>
+
+                <div>
+                    <input class="mt-4" type="text" name="nickname" value="{{ form.nickname.value }}">
+                </div>
+
+                <div>
+                    {% if profile.avatar %}
+                        <img class="upload-avatar mt-4" id="avatar" alt="Avatar" src="{{ profile.avatar.url }}">
+                    {% else %}
+                        <img class="upload-avatar mt-4" id="avatar" alt="Avatar" src="">
+                    {% endif %}
+                </div>
+
                 <div class="input-group mt-3">
                     <input id="file-path" placeholder="Choose file..." readonly>
                     <input name="avatar" type="file" id="file-input" accept="image/*">
                 </div>
+
                 <button type="submit" class="btn btn-outline-success mt-4">Save</button>
             </form>
         </div>
     </div>
+    {% if form.errors %}
+        <div class="alert alert-danger" style="margin-top: 10px;">
+            <ul>
+                {% for field, errors in form.errors.items %}
+                    {% for error in errors %}
+                        <li>{{ error }}</li>
+                    {% endfor %}
+                {% endfor %}
+            </ul>
+        </div>
+    {% endif %}
 </div>
 {% endblock %}
 

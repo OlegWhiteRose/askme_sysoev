@@ -8,6 +8,7 @@ from django.contrib.auth.hashers import check_password
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from askme_sysoev.models import *
 from .forms import *
+from django.contrib.auth.decorators import login_required
 from django.db import transaction
 from django.http import JsonResponse
 from .models import Image  
@@ -77,6 +78,7 @@ def index(request):
     return render(request, 'index.html', context)
 
 
+@login_required
 def ask(request):
     if request.user.is_authenticated and request.method == 'POST':
         form = QuestionForm(request.POST)
@@ -146,23 +148,46 @@ def question(request, id):
     return render(request, 'question.html', context)
 
 
+@login_required
 def settings(request):
+    user = request.user
+    profile = user.profile
     context = {
         'MEDIA_URL': conf.settings.MEDIA_URL,
     }
 
-    if request.user.is_authenticated and request.method == 'POST':
-        with transaction.atomic():  
-            user = request.user 
-            profile = user.profile  
+    if request.method == 'POST':
+        form = SettingsForm(request.POST, request.FILES, initial={'current_user': user})
 
-            if 'avatar' in request.FILES:
-                avatar_file = request.FILES['avatar']
-                image = Image.objects.create(name=f"{user.username}_avatar", file=avatar_file)
+        if form.is_valid():
+            with transaction.atomic():
+                login = form.cleaned_data.get('login')
+                email = form.cleaned_data.get('email')
+                nickname = form.cleaned_data.get('nickname')
 
-                profile.avatar = image.file
+                if login != user.username:
+                    user.username = login
+                if email != user.email:
+                    user.email = email
+                if nickname != profile.nickname:
+                    profile.nickname = nickname
+
+                user.save()
                 profile.save()
 
+                if 'avatar' in request.FILES:
+                    avatar_file = request.FILES['avatar']
+                    image = Image.objects.create(name=f"{user.username}_avatar", file=avatar_file)
+                    profile.avatar = image.file
+
+                    profile.save()
+
+                return redirect('settings')  
+
+    else:
+        form = SettingsForm(initial={'current_user': user, 'login': user.username, 'email': user.email, 'nickname': profile.nickname})
+
+    context['form'] = form
     return render(request, 'settings.html', context)
 
 

@@ -26,6 +26,29 @@ class LoginForm(forms.Form):
         })
     )
 
+class SettingsForm(forms.Form):
+    login = forms.CharField(max_length=150, required=True)
+    nickname = forms.CharField(max_length=150, required=True)
+    email = forms.EmailField(required=True)
+    avatar = forms.ImageField(required=False)
+
+    def clean_login(self):
+        login = self.cleaned_data.get('login')
+        current_user = self.initial.get('current_user')
+
+        if User.objects.filter(username=login).exclude(username=current_user.username).exists():
+            raise ValidationError("Логин уже занят.")
+
+        return login
+
+    def clean_email(self):
+        email = self.cleaned_data.get('email')
+        current_user = self.initial.get('current_user')
+
+        if User.objects.filter(email=email).exclude(email=current_user.email).exists():
+            raise ValidationError("Этот email уже зарегистрирован.")
+
+        return email
 
 class AnswerForm(forms.ModelForm):
     class Meta:
